@@ -63,6 +63,10 @@ Optional. Specifies a class to your `<form>` tag.
 
 	id="my-id"
 
+	attr:my-attribute="my-data"
+
+Optional. Specifies any arbitrary parameters you would like to add to your `<form>` tag. Useful specifically for data attributes.
+
 Optional. Specifies an id to your `<form>` tag.
 
 	to="janedoe@internet.com"

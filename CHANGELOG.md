@@ -1,5 +1,5 @@
-# 1.0.0-rc.1
+# 1.0.0
 
-2015-01-07
+2015-03-05
 
-- Initial commit.
+- Initial release.

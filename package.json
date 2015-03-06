@@ -2,7 +2,7 @@
 	"schema_version": "1.0",
 	"name" : "mandrill_mailer",
 	"label": "MandrillMailer",
-	"version": "1.0.0-rc.1",
+	"version": "1.0.0",
 	"types": ["plugin"],
 	"paths": {
 		"system": [

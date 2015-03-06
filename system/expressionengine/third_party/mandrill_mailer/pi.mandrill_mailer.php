@@ -2,7 +2,7 @@
 
 $plugin_info = array (
 	'pi_name' => 'Mandrill Mailer',
-	'pi_version' => '1.0.0-rc.1',
+	'pi_version' => '1.0.0',
 	'pi_author' => 'TJ Draper',
 	'pi_author_url' => 'http://buzzingpixel.com',
 	'pi_description' => 'Send emails via mandrill',
@@ -30,6 +30,15 @@ class Mandrill_mailer {
 		$message = explode('|', ee()->TMPL->fetch_param('message'));
 		$this->message = (! empty($message[0])) ? $message : false;
 
+		// Get form attr attributes
+		$this->formAttr = array();
+
+		foreach (ee()->TMPL->tagparams as $key => $val) {
+			if (strncmp($key, 'attr:', 5) === 0) {
+				$this->formAttr[substr($key, 5)] = $val;
+			}
+		}
+
 		// If there was an error posting, fill in the form values from the post
 		$this->variables = array();
 		foreach ($this->allowed as $allowed) {
@@ -45,7 +54,7 @@ class Mandrill_mailer {
 		}
 
 		// Detect whether this is a submission or not
-		if (ee()->input->post('submission')) {
+		if ($_POST) {
 			$returnData = $this->_postForm();
 		} else {
 			$returnData = $this->_setForm();
@@ -62,20 +71,17 @@ class Mandrill_mailer {
 		// Return errors if there are any
 		if ($errors) {
 			if ($this->jsonReturn === true) {
-				$json = '{';
-				$json .= '"success":0, "errors":[';
+				$output = array(
+					'success' => 0
+				);
 
 				foreach ($this->required as $required) {
 					if (! empty($errors['error:' . $required])) {
-						$json .= '"' . $required . '",';
+						$output['errors'][] = $required;
 					}
 				}
 
-				$json = rtrim($json, ',');
-
-				$json .= ']}';
-
-				exit($json);
+				ee()->output->send_ajax_response($output);
 			} else {
 				return $errors;
 			}
@@ -189,13 +195,11 @@ class Mandrill_mailer {
 				return $form;
 			}
 		} elseif ($this->jsonReturn == true) {
-			// Set JSON response
-			$json = '{"success":';
-			$json .= ($mandrillSuccess == true) ? '1' : '0';
-			$json .= '}';
+			$output = array(
+				'success' => ($mandrillSuccess == true) ? 1 : 0
+			);
 
-			// Return the JSON response to the template
-			exit($json);
+			ee()->output->send_ajax_response($output);
 		} else {
 			// Set the succes variable
 			$this->variables[0]['success'] = $mandrillSuccess;
@@ -280,14 +284,22 @@ class Mandrill_mailer {
 	private function _setForm($parse = true)
 	{
 		$form = '<form action="/' . ee()->uri->uri_string() . '" method="post"';
+
 		if ($this->formClass) {
 			$form .= ' class="' . $this->formClass . '"';
 		}
+
 		if ($this->formId) {
 			$form .= ' id="' . $this->formId . '"';
 		}
+
+		if ($this->formAttr) {
+			foreach ($this->formAttr as $key => $val) {
+				$form .= ' ' . $key . '="' . $val . '"';
+			}
+		}
+
 		$form .= '>';
-		$form .= '<input type="hidden" name="submission" value="true">';
 		$form .= $this->tagContents;
 		$form .= '</form>';
 
