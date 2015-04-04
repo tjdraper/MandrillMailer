@@ -1,5 +1,10 @@
-# 1.0.0
+# Version 1.0.0
 
-2015-03-05
+## Released 03-05-2015
 
-- Initial release.
+This is the initial release of Mandrill Mailer
+
+### Features
+
+- Easily set up forms and email them with the Mandrill API
+- Receive a JSON response to an AJAX submission
