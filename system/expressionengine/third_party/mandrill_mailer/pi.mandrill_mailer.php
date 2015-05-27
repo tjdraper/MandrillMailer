@@ -29,6 +29,8 @@ class Mandrill_mailer {
 		$this->subject = ee()->TMPL->fetch_param('subject');
 		$message = explode('|', ee()->TMPL->fetch_param('message'));
 		$this->message = (! empty($message[0])) ? $message : false;
+		$privateMessage = ee()->TMPL->fetch_param('private_message');
+		$this->privateMessage = ($privateMessage == 'yes')? true : false;
 
 		// Get form attr attributes
 		$this->formAttr = array();
@@ -136,6 +138,11 @@ class Mandrill_mailer {
 
 		// Set the from email to the webmaster email for best deliverability
 		$message['from_email'] = ee()->config->item('webmaster_email');
+
+		// view_content_link boolean set to false to remove content logging for sensitive emails
+		if ($this->privateMessage) {
+			$message['view_content_link'] = false;
+		}
 
 		// Content
 
