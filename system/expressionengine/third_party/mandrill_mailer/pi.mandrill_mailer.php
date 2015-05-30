@@ -2,9 +2,9 @@
 
 $plugin_info = array (
 	'pi_name' => 'Mandrill Mailer',
-	'pi_version' => '1.0.0',
+	'pi_version' => '1.1.0',
 	'pi_author' => 'TJ Draper',
-	'pi_author_url' => 'http://buzzingpixel.com',
+	'pi_author_url' => 'https://buzzingpixel.com',
 	'pi_description' => 'Send emails via mandrill',
 	'pi_usage' => Mandrill_mailer::usage()
 );
@@ -19,16 +19,18 @@ class Mandrill_mailer {
 		$this->formId = ee()->TMPL->fetch_param('id');
 		$this->return = ee()->TMPL->fetch_param('return');
 		$jsonReturn = ee()->TMPL->fetch_param('json');
-		$this->jsonReturn = ($jsonReturn == 'yes') ? true : false;
+		$this->jsonReturn = $jsonReturn == 'yes' ? true : false;
 		$this->required = explode('|', ee()->TMPL->fetch_param('required'));
 		$this->allowed = explode('|', ee()->TMPL->fetch_param('allowed'));
 		$to = explode('|', ee()->TMPL->fetch_param('to'));
-		$this->to = (! empty($to[0])) ? $to : false;
+		$this->to = ! empty($to[0]) ? $to : false;
 		$this->from = ee()->TMPL->fetch_param('from');
 		$this->fromName = ee()->TMPL->fetch_param('from-name');
 		$this->subject = ee()->TMPL->fetch_param('subject');
 		$message = explode('|', ee()->TMPL->fetch_param('message'));
-		$this->message = (! empty($message[0])) ? $message : false;
+		$this->message = ! empty($message[0]) ? $message : false;
+		$privateMessage = ee()->TMPL->fetch_param('private_message');
+		$this->privateMessage = ($privateMessage == 'yes')? true : false;
 
 		// Get form attr attributes
 		$this->formAttr = array();
@@ -136,6 +138,11 @@ class Mandrill_mailer {
 
 		// Set the from email to the webmaster email for best deliverability
 		$message['from_email'] = ee()->config->item('webmaster_email');
+
+		// Disable logging if private message has been set
+		if ($this->privateMessage) {
+			$message['view_content_link'] = false;
+		}
 
 		// Content
 
@@ -283,7 +290,7 @@ class Mandrill_mailer {
 
 	private function _setForm($parse = true)
 	{
-		$form = '<form action="/' . ee()->uri->uri_string() . '" method="post"';
+		$form = '<form action="" method="post"';
 
 		if ($this->formClass) {
 			$form .= ' class="' . $this->formClass . '"';
@@ -300,6 +307,14 @@ class Mandrill_mailer {
 		}
 
 		$form .= '>';
+
+		// Check for CSRF
+		if (ee()->config->item('disable_csrf_protection') === false) {
+			$form .= '<input type="hidden" name="';
+			$form .= ee()->security->get_csrf_token_name() . '" ';
+			$form .= 'value="' . ee()->security->get_csrf_hash() . '">';
+		}
+
 		$form .= $this->tagContents;
 		$form .= '</form>';
 
@@ -311,7 +326,7 @@ class Mandrill_mailer {
 		ob_start();
 ?>
 See documentation and instructions at:
-https://github.com/tjdraper/MandrillMailer
+https://buzzingpixel.com/ee-add-ons/mandrill-mailer/documentation
 <?php
 		$buffer = ob_get_contents();
 
