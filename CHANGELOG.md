@@ -1,3 +1,19 @@
+# Version 2.0.0
+
+## Released 10-25-2015
+
+### New
+
+- Added support for ExpressionEngine 3.
+
+### Breaking
+
+- This release is not compatible with ExpressionEngine 2.x
+
+### Updated
+
+- Updated Manrill PHP API from 1.0.53 to 1.0.55
+
 # Version 1.1.0
 
 ## Released 05-29-2015
