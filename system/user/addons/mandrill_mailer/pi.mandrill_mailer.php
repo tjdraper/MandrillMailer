@@ -1,14 +1,5 @@
 <?php if (! defined('BASEPATH')) exit('No direct script access allowed');
 
-$plugin_info = array (
-	'pi_name' => 'Mandrill Mailer',
-	'pi_version' => '1.1.0',
-	'pi_author' => 'TJ Draper',
-	'pi_author_url' => 'https://buzzingpixel.com',
-	'pi_description' => 'Send emails via mandrill',
-	'pi_usage' => Mandrill_mailer::usage()
-);
-
 class Mandrill_mailer {
 
 	public function __construct()
@@ -290,48 +281,26 @@ class Mandrill_mailer {
 
 	private function _setForm($parse = true)
 	{
-		$form = '<form action="" method="post"';
+		ee()->load->helper('form');
+
+		$attributes = array();
 
 		if ($this->formClass) {
-			$form .= ' class="' . $this->formClass . '"';
+			$attributes['class'] = $this->formClass;
 		}
 
 		if ($this->formId) {
-			$form .= ' id="' . $this->formId . '"';
+			$attributes['id'] = $this->formId;
 		}
 
 		if ($this->formAttr) {
 			foreach ($this->formAttr as $key => $val) {
-				$form .= ' ' . $key . '="' . $val . '"';
+				$attributes[$key] = $val;
 			}
 		}
 
-		$form .= '>';
-
-		// Check for CSRF
-		if (ee()->config->item('disable_csrf_protection') === false) {
-			$form .= '<input type="hidden" name="';
-			$form .= ee()->security->get_csrf_token_name() . '" ';
-			$form .= 'value="' . ee()->security->get_csrf_hash() . '">';
-		}
-
-		$form .= $this->tagContents;
-		$form .= '</form>';
+		$form = form_open('', $attributes) . $this->tagContents . '</form>';
 
 		return ee()->TMPL->parse_variables($form, $this->variables);
-	}
-
-	function usage()
-	{
-		ob_start();
-?>
-See documentation and instructions at:
-https://buzzingpixel.com/ee-add-ons/mandrill-mailer/documentation
-<?php
-		$buffer = ob_get_contents();
-
-		ob_end_clean();
-
-		return $buffer;
 	}
 }
