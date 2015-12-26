@@ -1,3 +1,11 @@
+# Version 2.0.1
+
+## Released 12-26-2015
+
+### Fixed
+
+- Fixed an issue where the form action would not post back to the same page (something in the CodeIgniter form_open method appears to have changed)
+
 # Version 2.0.0
 
 ## Released 10-25-2015

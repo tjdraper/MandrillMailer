@@ -1,4 +1,4 @@
-# Mandrill Mailer 2.0.0 for ExpressionEngine 3
+# Mandrill Mailer 2.0.1 for ExpressionEngine 3
 
 Easily set up an email form to send via the Mandrill API.
 
