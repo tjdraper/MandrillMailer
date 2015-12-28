@@ -299,7 +299,15 @@ class Mandrill_mailer {
 			}
 		}
 
-		$form = form_open('', $attributes) . $this->tagContents . '</form>';
+		$siteUrl = rtrim(ee()->config->item('site_url'), '/');
+		$siteIndex = ee()->config->item('site_index');
+		$siteIndex = $siteIndex ? $siteIndex . '/' : $siteIndex;
+		$uriString = ee()->uri->uri_string;
+
+		$form = form_open(
+			"{$siteUrl}/{$siteIndex}{$uriString}",
+			$attributes
+		) . $this->tagContents . '</form>';
 
 		return ee()->TMPL->parse_variables($form, $this->variables);
 	}
