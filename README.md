@@ -2,7 +2,7 @@
 
 Easily set up an email form to send via the Mandrill API.
 
-## Docuemntation
+## Documentation
 
 Documentation is available at https://buzzingpixel.com/ee-add-ons/mandrill-mailer/documentation
 
